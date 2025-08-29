@@ -1,7 +1,0 @@
-node_modules
-.vscode*
-
-# Logs
-*.log
-*.log.*
-npm-debug.log*
