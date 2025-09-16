@@ -9,7 +9,7 @@ export class GlobalZodSchema {
         ZERO_SIGN_PRIVATE_KEY: z.string().nullish().transform(v => v ?? ''),
         REDIS_HOST: z.string().nullish().transform(v => v ?? ''),
         REDIS_PORT: z.string().nullish().transform(v => v ?? ''),
-        PORT: z.string().nullish().transform(v => v ?? ''),
+        NOTIFICATION_SERVER_PORT: z.string().nullish().transform(v => v ?? ''),
 
         NODEMAILER_EMAIL: z.string().nullish().transform(v => v ?? ''),
         NODEMAILER_PASSWORD: z.string().nullish().transform(v => v ?? ''),

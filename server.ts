@@ -11,10 +11,10 @@ import { globalTriggers } from "@/triggers";
 import { ip } from "address";
 import { initSocket } from "@/sockets";
 
-const PORT = process.env.PORT || 8001;
+const NOTIFICATION_SERVER_PORT = process.env.NOTIFICATION_SERVER_PORT || 8001;
 const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 7001;
 export const server = new Server({
-    port: Number(PORT)
+    port: Number(NOTIFICATION_SERVER_PORT)
 })
 
 const httpServer = server.getHttpServerInstance();
