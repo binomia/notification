@@ -1,1 +1,1 @@
-# Binomia Notificaions Server
+# Binomia Notificaions
