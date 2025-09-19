@@ -1,71 +1,20 @@
 import "dotenv/config"
-import cluster from "cluster";
-import os from "os";
-import { Server, Extensions, ServerTypes } from "cromio"
 import { Server as SocketIOServer } from 'socket.io';
-import { setupMaster, setupWorker } from "@socket.io/sticky";
-import { createAdapter, setupPrimary } from "@socket.io/cluster-adapter";
-// import { subscriber } from "@/redis";
-// import { NOTIFICATION_REDIS_SUBSCRIPTION_CHANNEL } from "@/constants";
-import { globalTriggers } from "@/triggers";
-import { ip } from "address";
+import { NOTIFICATION_SOCKET_IO_PORT } from "@/constants";
 import { initSocket } from "@/sockets";
+import { server } from "@/server";
+import { ServerTypes } from "cromio";
 
-const NOTIFICATION_SERVER_PORT = process.env.NOTIFICATION_SERVER_PORT || 8001;
-const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 7001;
-export const server = new Server({
-    port: Number(NOTIFICATION_SERVER_PORT)
-})
 
-const httpServer = server.getHttpServerInstance();
-if (cluster.isPrimary) {
-
-    setupMaster(httpServer, {
-        loadBalancingMethod: "least-connection"
+server.start(async (url: string) => {
+    console.log(`\n[Notification]: worker ${process.pid} is running on ${url}`);
+    const io = new SocketIOServer({
+        cors: {
+            origin: "*"
+        }
     });
 
-    setupPrimary();
-    cluster.setupPrimary({
-        serialization: "advanced"
-    });
-
-    os.cpus().forEach(() => {
-        cluster.fork()
-    })
-
-    // subscriber.subscribe(...[
-    //     ...Object.values(NOTIFICATION_REDIS_SUBSCRIPTION_CHANNEL)
-    // ])
-
-    // subscriber.on("message", async (channel, payload) => {
-    //     if (!cluster.workers) return;
-
-    //     const workerIds = Object.keys(cluster.workers);
-    //     const randomWorkerId = workerIds[Math.floor(Math.random() * workerIds.length)];
-    //     const selectedWorker = cluster.workers[randomWorkerId];
-
-    //     if (selectedWorker) {
-    //         selectedWorker.send({ payload, channel }); // Send task to selected worker
-    //         console.log(`Master dispatched task to worker ${selectedWorker.process.pid}`);
-    //     }
-    // })
-
-    cluster.on("exit", (worker) => {
-        console.log(`Worker ${worker.process.pid} died`);
-        cluster.fork();
-    });
-
-} else {
-    const io = new SocketIOServer(server.getHttpServerInstance());
-    io.adapter(createAdapter());
-    setupWorker(io);
     initSocket(io);
-
-    server.addExtension(Extensions.serverPrometheusMetrics({
-        port: Number(PROMETHEUS_PORT)
-    }));
-    
-    server.registerTriggerDefinition(globalTriggers);
     server.onTrigger("socketEventEmitter", async ({ body }: ServerTypes.OnTriggerType) => {
         try {
             const { data, channel, senderSocketRoom, recipientSocketRoom } = body;
@@ -77,7 +26,5 @@ if (cluster.isPrimary) {
         }
     });
 
-    server.start(async (url: string) => {
-        console.log(`\n[Notification]: worker ${process.pid} is running on ${url}`);
-    })
-}
+    io.listen(NOTIFICATION_SOCKET_IO_PORT);
+})

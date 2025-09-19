@@ -5,6 +5,9 @@ export const NODEMAILER_PASSWORD: string = process.env.NODEMAILER_PASSWORD || ""
 export const ZERO_ENCRYPTION_KEY: string = process.env.ZERO_ENCRYPTION_KEY || "";
 export const ZERO_SIGN_PRIVATE_KEY: string = process.env.ZERO_SIGN_PRIVATE_KEY || "";
 export const SENDGRID_API_KEY: string = process.env.SENDGRID_API_KEY || "";
+export const NOTIFICATION_SERVER_PORT = process.env.NOTIFICATION_SERVER_PORT || 8001;
+export const PROMETHEUS_PORT = Number(process.env.PROMETHEUS_PORT) || 7001;
+export const NOTIFICATION_SOCKET_IO_PORT = Number(process.env.NOTIFICATION_SOCKET_IO_PORT) || 6001;
 
 
 export const NOTIFICATION_REDIS_SUBSCRIPTION_CHANNEL = {
