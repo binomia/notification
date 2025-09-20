@@ -1,4 +1,6 @@
 import { Server } from "socket.io";
+import { Job, JobJson, Queue, Worker } from "bullmq";
+
 
 export const initSocket = async (io: Server) => {
     io.on("connection", (socket) => {
