@@ -1,9 +1,9 @@
-import { ZERO_ENCRYPTION_KEY } from "@/constants";
-import { triggerDefinition, ServerTypes } from "cromio";
-import { HASH } from "cryptografia";
+import {ZERO_ENCRYPTION_KEY} from "@/constants";
+import {ServerTypes, triggerDefinition} from "cromio";
+import {HASH} from "cryptografia";
 import jwt from 'jsonwebtoken';
 import Email from "@/email";
-import { sendNotification } from "@/expo";
+import {sendNotification} from "@/expo";
 
 
 const globalTriggers = triggerDefinition()
@@ -29,9 +29,7 @@ globalTriggers.onTrigger("sendEmail", async ({ body }: ServerTypes.OnTriggerType
 globalTriggers.onTrigger("sendVerificationCode", async ({ body }: ServerTypes.OnTriggerType) => {
     try {
         const { email, code } = body;
-        const sentMessageInfo = await Email.sendVerificationCode(email, code);
-
-        return sentMessageInfo
+        return await Email.sendVerificationCode(email, code)
 
     } catch (error) {
         console.log({ sendVerificationCodeError: error });

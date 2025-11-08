@@ -14,7 +14,7 @@ server.start(async (url: string) => {
         }
     });
 
-    initSocket(io);
+    await initSocket(io);
     server.onTrigger("socketEventEmitter", async ({ body }: ServerTypes.OnTriggerType) => {
         try {
             const { data, channel, senderSocketRoom, recipientSocketRoom } = body;
