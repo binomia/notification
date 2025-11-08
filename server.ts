@@ -7,17 +7,15 @@ import {ServerTypes} from "cromio";
 import {ZodSchemas} from "@/schemas";
 import {sendNotification} from "@/expo";
 
-
 server.start(async (url: string) => {
-    console.log(`\n[Notification]: worker ${process.pid} is running on ${url}`);
-    const io = new SocketIOServer({
+    const io = new SocketIOServer(NOTIFICATION_SOCKET_IO_PORT, {
         cors: {
             origin: "*"
         }
     });
 
     await initSocket(io);
-    io.listen(NOTIFICATION_SOCKET_IO_PORT);
+    console.log("Client connected");
 
     server.onTrigger(NOTIFICATION_TRIGGERS.SOCKET_EVENT_EMITTER, async ({body}: ServerTypes.OnTriggerType) => {
         try {
@@ -32,6 +30,7 @@ server.start(async (url: string) => {
     });
 
     server.onTrigger(NOTIFICATION_TRIGGERS.PUSH_EXPO_NOTIFICATION, async ({body}: ServerTypes.OnTriggerType) => {
+
         try {
             const data = await ZodSchemas.pushNotification.parseAsync(body);
             await sendNotification(data)
@@ -42,4 +41,6 @@ server.start(async (url: string) => {
             return false;
         }
     });
+
+    console.log(`[Notification]: worker ${process.pid} is running on ${url}`);
 })

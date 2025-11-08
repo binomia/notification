@@ -1,5 +1,5 @@
-import { NODEMAILER_EMAIL, SENDGRID_API_KEY } from "@/constants";
-import nodemailer, { SentMessageInfo } from "nodemailer";
+import {NODEMAILER_EMAIL, SENDGRID_API_KEY} from "@/constants";
+import nodemailer, {SentMessageInfo} from "nodemailer";
 import sgMail from '@sendgrid/mail';
 
 const transporter = nodemailer.createTransport({
@@ -18,16 +18,14 @@ sgMail.setApiKey(SENDGRID_API_KEY);
 class Email {
     static sendGrid = async ({ to, subject, text, html }: { to: string, subject: string, text: string, html: string }): Promise<SentMessageInfo> => {
         try {
-            const info = await sgMail.send({
+            return await sgMail.send({
                 to,
                 html,
                 from: "brayhandeaza@gmail.com",
                 subject,
                 text,
                 // templateId: "4dcb1341dd3c4806a84931ee59f0311e",
-            });
-
-            return info
+            })
 
         } catch (error: any) {
             console.error(error);
@@ -51,12 +49,12 @@ class Email {
 
     static sendVerificationCode = async (to: string, code: string): Promise<SentMessageInfo> => {
         try {
-            const info = await Email.send({
+            return await Email.send({
                 to,
                 subject: "Verificacion de Inicio de Sesion",
                 text: "Tu codigo de verificacion es: " + code,
                 html: `
-                    <html>
+                    <html lang="">
                         <body style="font-family: Arial, sans-serif; color: #333; margin: 0; padding: 0;">
                             <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
                                 <div style="text-align: center; padding-bottom: 20px;">
@@ -82,9 +80,7 @@ class Email {
                         </body>
                     </html>
                 `
-            });
-
-            return info
+            })
 
         } catch (error) {
             console.error(error);
