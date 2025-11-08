@@ -1,4 +1,4 @@
-import {ZERO_ENCRYPTION_KEY} from "@/constants";
+import {NOTIFICATION_TRIGGERS, ZERO_ENCRYPTION_KEY} from "@/constants";
 import Email from "@/email";
 import {JSONRPCServer} from "json-rpc-2.0";
 import jwt from 'jsonwebtoken';
@@ -33,7 +33,7 @@ export const initMethods = (server: JSONRPCServer, io: Server) => {
         }
     });
 
-    server.addMethod("newTransactionNotification", async ({data}: { data: { token: string, message: string }[] }) => {
+    server.addMethod(NOTIFICATION_TRIGGERS.PUSH_EXPO_NOTIFICATION, async ({data}: { data: { token: string, message: string }[] }) => {
         try {
             await sendNotification(data)
             return true

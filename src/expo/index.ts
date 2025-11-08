@@ -1,14 +1,16 @@
-import { evironmentVariables } from '@/constants';
-import { Expo, ExpoPushMessage } from 'expo-server-sdk';
+import {environmentVariables} from '@/constants';
+import {Expo, ExpoPushMessage} from 'expo-server-sdk';
+import {z} from "zod";
+import {ZodSchemas} from "@/schemas";
 
 const expo = new Expo({
-    accessToken: evironmentVariables.EXPO_ACCESS_TOKEN,
+    accessToken: environmentVariables.EXPO_ACCESS_TOKEN,
     useFcmV1: true,
 });
 
-export const sendNotification = async (tokens: { token: string, message: string }[]) => {
+export const sendNotification = async (tokens: z.infer<typeof ZodSchemas.pushNotification>) => {
     try {
-        const messages: ExpoPushMessage[] = tokens.map(({ token, message }) => {
+        const messages: ExpoPushMessage[] = tokens.map(({token, message}) => {
             return {
                 to: token,
                 sound: 'money.wav',
@@ -22,6 +24,6 @@ export const sendNotification = async (tokens: { token: string, message: string 
         await expo.sendPushNotificationsAsync(messages);
 
     } catch (error) {
-        console.log(error);
+        console.log({sendNotification: error});
     }
 }

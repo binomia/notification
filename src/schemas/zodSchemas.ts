@@ -1,5 +1,5 @@
-import { generate } from "short-uuid";
-import { z } from "zod";
+import {generate} from "short-uuid";
+import {z} from "zod";
 
 
 const sendEmail = z.object({
@@ -14,6 +14,11 @@ const sendEmail = z.object({
     })
 });
 
+
+export const pushNotification = z.array(z.object({
+    token: z.string(),
+    message: z.string(),
+}))
 
 const echo = z.object({
     jsonrpc: z.literal("2.0"),

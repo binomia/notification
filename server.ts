@@ -1,9 +1,11 @@
 import "dotenv/config"
-import { Server as SocketIOServer } from 'socket.io';
-import { NOTIFICATION_SOCKET_IO_PORT } from "@/constants";
-import { initSocket } from "@/sockets";
-import { server } from "@/server";
-import { ServerTypes } from "cromio";
+import {Server as SocketIOServer} from 'socket.io';
+import {NOTIFICATION_SOCKET_IO_PORT, NOTIFICATION_TRIGGERS} from "@/constants";
+import {initSocket} from "@/sockets";
+import {server} from "@/server";
+import {ServerTypes} from "cromio";
+import {ZodSchemas} from "@/schemas";
+import {sendNotification} from "@/expo";
 
 
 server.start(async (url: string) => {
@@ -15,16 +17,29 @@ server.start(async (url: string) => {
     });
 
     await initSocket(io);
-    server.onTrigger("socketEventEmitter", async ({ body }: ServerTypes.OnTriggerType) => {
+    io.listen(NOTIFICATION_SOCKET_IO_PORT);
+
+    server.onTrigger(NOTIFICATION_TRIGGERS.SOCKET_EVENT_EMITTER, async ({body}: ServerTypes.OnTriggerType) => {
         try {
-            const { data, channel, senderSocketRoom, recipientSocketRoom } = body;
+            const {data, channel, senderSocketRoom, recipientSocketRoom} = body;
             io.to([recipientSocketRoom, senderSocketRoom]).emit(channel, data)
             return true
 
         } catch (error) {
-            console.log(error);
+            console.log({socketEventEmitter: error});
+            return false;
         }
     });
 
-    io.listen(NOTIFICATION_SOCKET_IO_PORT);
+    server.onTrigger(NOTIFICATION_TRIGGERS.PUSH_EXPO_NOTIFICATION, async ({body}: ServerTypes.OnTriggerType) => {
+        try {
+            const data = await ZodSchemas.pushNotification.parseAsync(body);
+            await sendNotification(data)
+            return true
+
+        } catch (error) {
+            console.log({pushExpoNotification: error});
+            return false;
+        }
+    });
 })

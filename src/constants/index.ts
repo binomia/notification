@@ -1,4 +1,4 @@
-import { GlobalZodSchema } from "@/auth/globalZodSchema";
+import { GlobalZodSchema } from "@/schemas/globalZodSchema";
 
 export const NODEMAILER_EMAIL: string = process.env.NODEMAILER_EMAIL || "";
 export const NODEMAILER_PASSWORD: string = process.env.NODEMAILER_PASSWORD || "";
@@ -9,6 +9,11 @@ export const NOTIFICATION_SERVER_PORT = process.env.NOTIFICATION_SERVER_PORT || 
 export const PROMETHEUS_PORT = Number(process.env.PROMETHEUS_PORT) || 7001;
 export const NOTIFICATION_SOCKET_IO_PORT = Number(process.env.NOTIFICATION_SOCKET_IO_PORT) || 6001;
 
+// socketEventEmitter
+export enum NOTIFICATION_TRIGGERS {
+    PUSH_EXPO_NOTIFICATION = 'pushExpoNotification',
+    SOCKET_EVENT_EMITTER = 'socketEventEmitter',
+}
 
 export const NOTIFICATION_REDIS_SUBSCRIPTION_CHANNEL = {
     NOTIFICATION_TRANSACTION_CREATED: "NOTIFICATION_TRANSACTION_CREATED",
@@ -21,4 +26,4 @@ export const NOTIFICATION_REDIS_SUBSCRIPTION_CHANNEL = {
 }
 
 
-export const evironmentVariables = GlobalZodSchema.evironmentVariables.parse(process.env)
+export const environmentVariables = GlobalZodSchema.evironmentVariables.parse(process.env)

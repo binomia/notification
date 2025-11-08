@@ -1,4 +1,4 @@
-import {ZERO_ENCRYPTION_KEY} from "@/constants";
+import {NOTIFICATION_TRIGGERS, ZERO_ENCRYPTION_KEY} from "@/constants";
 import {ServerTypes, triggerDefinition} from "cromio";
 import {HASH} from "cryptografia";
 import jwt from 'jsonwebtoken';
@@ -37,7 +37,7 @@ globalTriggers.onTrigger("sendVerificationCode", async ({ body }: ServerTypes.On
 })
 
 
-globalTriggers.onTrigger("newTransactionNotification", async ({ body }: ServerTypes.OnTriggerType) => {
+globalTriggers.onTrigger(NOTIFICATION_TRIGGERS.PUSH_EXPO_NOTIFICATION, async ({ body }: ServerTypes.OnTriggerType) => {
     try {
         const { data } = body
         await sendNotification(data)
